@@ -12,7 +12,7 @@ export default {
   methods: {
     addTodo() {
       if (this.title.trim() !== '') {
-        this.$emit('add', { title: this.title, priority: 3, description: this.title });
+        this.$emit('add', { title: this.title, description: this.title, priority: 3 });
         this.title = '';
       }
     },
