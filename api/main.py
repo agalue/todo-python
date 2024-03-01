@@ -6,6 +6,7 @@ from sqlmodel import Field, SQLModel, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
 from datetime import datetime
 from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
@@ -27,6 +28,20 @@ app = FastAPI(
     contact={"name": "Alejandro Galue"}
 )
 
+origins = [
+    "http://localhost",
+    "http://localhost:8080",
+    "http://localhost:8081",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 class Todo(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True, nullable=False)
     title: str
@@ -37,7 +52,7 @@ class Todo(SQLModel, table=True):
 
 class TodoAdd(BaseModel):
     title: str
-    description: Optional[str]
+    description: Optional[str] = None
     priority: int
 
     @field_validator('priority')
