@@ -1,0 +1,59 @@
+---
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+exporters:
+  otlp:
+    endpoint: http://tempo:4317
+    tls:
+      insecure: true
+  prometheusremotewrite:
+    endpoint: http://mimir:9009/api/v1/push
+    tls:
+      insecure: true
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+    tls:
+      insecure: true
+
+processors:
+  batch:
+  spanmetrics:
+    metrics_exporter: prometheusremotewrite
+
+connectors:
+  spanmetrics:
+
+service:
+  pipelines:
+    traces:
+      receivers:
+      - otlp
+      processors:
+      - batch
+      exporters:
+      - otlp
+      - spanmetrics
+    metrics:
+      receivers:
+      - otlp
+      - spanmetrics
+      processors:
+      - batch
+      exporters:
+      - prometheusremotewrite
+    logs:
+      receivers:
+      - otlp
+      processors:
+      - batch
+      exporters:
+      - loki
+  telemetry:
+    metrics:
+      address: 0.0.0.0:8888

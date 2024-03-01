@@ -1,0 +1,11 @@
+fastapi
+pydantic
+uvicorn
+sqlmodel
+asyncpg
+opentelemetry-distro
+opentelemetry-instrumentation-asyncpg
+opentelemetry-instrumentation-fastapi
+opentelemetry-instrumentation-sqlalchemy
+opentelemetry-instrumentation-logging
+opentelemetry-exporter-otlp
