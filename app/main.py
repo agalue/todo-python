@@ -120,7 +120,7 @@ async def delete_todo(id: int, db: DB) -> Todo:
     return todo
 
 LoggingInstrumentor().instrument(set_logging_format=True)
-FastAPIInstrumentor.instrument_app(app, excluded_urls="health")
+FastAPIInstrumentor.instrument_app(app)
 SQLAlchemyInstrumentor().instrument(
     engine=engine.sync_engine,
     enable_commenter=True,

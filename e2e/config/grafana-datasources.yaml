@@ -24,10 +24,12 @@ datasources:
   access: proxy
   url: http://loki:3100
   jsonData:
+    # LogQL example: {exporter="OTLP"} | json
     derivedFields:
     - name: TraceID
       datasourceUid: tempo
-      matcherRegex: attributes_otelTraceID=(\w+)
+      matchType: label
+      matcherRegex: traceid
       url: $${__value.raw}
 
 - name: Tempo
