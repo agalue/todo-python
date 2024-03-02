@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "esnext",
+    "target": "ES6",
+    "module": "ESNext",
     "baseUrl": "./",
     "moduleResolution": "node",
     "paths": {
@@ -15,5 +15,8 @@
       "dom.iterable",
       "scripthost"
     ]
-  }
+  },
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -1,17 +1,17 @@
 <template>
-  <div id="app">
   <v-app>
     <v-main>
-      <v-theme-provider theme="light">
+      <v-theme-provider>
         <v-container>
           <v-row justify="center" class="ma-5">
             <v-col xs="12" sm="8">
               <v-card>
                 <v-toolbar color="blue">
+                  <v-icon icon="mdi-checkbox-marked-circle-plus-outline" end></v-icon>
                   <v-toolbar-title class="headline">TODO Application</v-toolbar-title>
                 </v-toolbar>
                 <AddTodoForm @add="onAdd" />
-                <TodoList :todos="todos" @delete="onDelete" />
+                <TodoList :todos="todos" @delete="onDelete" @complete="onComplete" />
               </v-card>
             </v-col>
           </v-row>
@@ -19,8 +19,6 @@
       </v-theme-provider>
     </v-main>
   </v-app>
-</div>
-
 </template>
 
 <script>
@@ -33,8 +31,10 @@ const apiBaseURL = 'http://localhost:8080/todos/'
 export default {
   data() {
     return {
-      isDark: true,
-      todos: [],
+      todos: [
+        // {id: 100, title: "Learn VueJS 3", priority: 1, created_at: new Date().toString(), completed: false },
+        // {id: 101, title: "Learn Vuetify", priority: 2, created_at: new Date().toString(), completed: true }
+      ],
     };
   },
   methods: {
@@ -60,6 +60,14 @@ export default {
         this.todos = this.todos.filter((todo) => todo.id !== id);
       } catch (error) {
         console.error('Error deleting todo:', error);
+      }
+    },
+    async onComplete(id, completed) {
+      try {
+        await axios.put(`${apiBaseURL}${id}`, {completed});
+        this.todos.find((todo) => todo.id == id).completed = completed
+      } catch (error) {
+        console.error('Error marking todo as complete:', error);
       }
     },
   },
