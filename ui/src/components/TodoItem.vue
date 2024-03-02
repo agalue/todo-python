@@ -13,25 +13,28 @@
   </v-list-item>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      completed: this.todo.completed,
-    };
-  },
-  props: {
-    todo: Object,
-  },
-  methods: {
-    onDelete() {
-      this.$emit('delete', this.todo.id);
-    },
-    onComplete() {
-      this.$emit('complete', this.todo.id, !this.completed);
-    }
-  },
+<script setup>
+import { ref, defineProps, defineEmits, toRefs, onMounted } from 'vue';
+
+const completed = ref(false)
+
+const emit = defineEmits(['delete', 'complete'])
+
+const props = defineProps({
+  todo: Object
+});
+
+const { todo } = toRefs(props)
+
+const onDelete = () => {
+  emit('delete', todo.value.id);
 };
+
+const onComplete = () => {
+  emit('complete', todo.value.id, !completed.value);
+};
+
+onMounted(() => completed.value = todo.value.completed)
 </script>
 
 <style>

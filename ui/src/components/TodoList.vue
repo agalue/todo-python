@@ -4,23 +4,22 @@
   </v-list>
 </template>
 
-<script>
+<script setup>
 import TodoItem from './TodoItem.vue';
 
-export default {
-  props: {
-    todos: Array,
-  },
-  components: {
-    TodoItem,
-  },
-  methods: {
-    onDelete(id) {
-      this.$emit('delete', id);
-    },
-    onComplete(id, completed) {
-      this.$emit('complete', id, completed);
-    }
-  },
+import { defineProps, defineEmits } from 'vue';
+
+defineProps({
+  todos: Array
+});
+
+const emit = defineEmits(['delete', 'complete'])
+
+const onDelete = (id) => {
+  emit('delete', id);
+};
+
+const onComplete = (id, completed) => {
+  emit('complete', id, completed);
 };
 </script>
