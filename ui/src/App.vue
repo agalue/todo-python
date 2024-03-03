@@ -1,18 +1,26 @@
 <template>
   <v-app>
+    <v-app-bar color="primary" dark>
+      <v-icon icon="mdi-checkbox-marked-circle-plus-outline" end></v-icon>
+      <v-app-bar-title>TODO Application</v-app-bar-title>
+    </v-app-bar>
     <v-container>
       <v-row justify="center">
         <v-col>
           <v-card>
-            <v-toolbar color="blue">
-              <v-icon icon="mdi-checkbox-marked-circle-plus-outline" end></v-icon>
-              <v-toolbar-title class="headline">TODO Application</v-toolbar-title>
-            </v-toolbar>
             <AddTodoForm @add="onAdd" />
             <TodoList :todos="todos" @delete="onDelete" @complete="onComplete" />
           </v-card>
         </v-col>
       </v-row>
+      <v-snackbar v-model="errorSnackbar.show" color="red" top>
+        {{ errorSnackbar.message }}
+        <template v-slot:actions>
+          <v-btn text @click="errorSnackbar.show = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </template>
+      </v-snackbar>
     </v-container>
   </v-app>
 </template>
@@ -29,7 +37,21 @@ const todos = ref([
   // {id: 101, title: "Learn Vuetify", priority: 2, created_at: new Date().toString(), completed: true }
 ]);
 
+const errorSnackbar = ref({ show: false, message: '' });
+
 const apiBaseURL = 'http://localhost:8080/todos/';
+
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    showErrorSnackbar(error.message || 'A server-side error occurred');
+    return Promise.reject(error);
+  }
+);
+
+const showErrorSnackbar = (message) => {
+  errorSnackbar.value = { show: true, message };
+}
 
 const fetchTodos = async () => {
   try {

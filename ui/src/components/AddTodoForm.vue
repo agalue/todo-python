@@ -1,5 +1,5 @@
 <template>
-  <v-text-field v-model="title" label="Type new your task and hit enter to add it" @keyup.enter="addTodo" />
+  <v-text-field v-model="title" label="Type your new task and hit enter to add it" @keyup.enter="addTodo" />
 </template>
 
 <script setup>
