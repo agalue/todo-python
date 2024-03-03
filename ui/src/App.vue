@@ -3,6 +3,10 @@
     <v-app-bar color="primary" dark>
       <v-icon icon="mdi-checkbox-marked-circle-plus-outline" end></v-icon>
       <v-app-bar-title>TODO Application</v-app-bar-title>
+      <v-spacer></v-spacer>
+      <v-btn icon :href="docsURL" target="_blank">
+        <v-icon icon="mdi-help"/>
+      </v-btn>
     </v-app-bar>
     <v-container>
       <v-row justify="center">
@@ -16,8 +20,8 @@
       <v-snackbar v-model="errorSnackbar.show" color="red" top>
         {{ errorSnackbar.message }}
         <template v-slot:actions>
-          <v-btn text @click="errorSnackbar.show = false">
-            <v-icon>mdi-close</v-icon>
+          <v-btn @click="errorSnackbar.show = false">
+            <v-icon icon="mdi-close"/>
           </v-btn>
         </template>
       </v-snackbar>
@@ -39,7 +43,9 @@ const todos = ref([
 
 const errorSnackbar = ref({ show: false, message: '' });
 
-const apiBaseURL = 'http://localhost:8080/todos/';
+const baseURL = 'http://localhost:8080';
+const apiBaseURL = `${baseURL}/todos/`;
+const docsURL = ref(`${baseURL}docs`);
 
 axios.interceptors.response.use(
   (response) => response,
