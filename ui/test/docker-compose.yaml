@@ -36,7 +36,7 @@ services:
 
   api:
     build:
-      context: ../api
+      context: ../../api
     hostname: api
     container_name: api
     depends_on:
