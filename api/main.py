@@ -1,4 +1,5 @@
 # docker run -d --rm --name postgres -e POSTGRES_DB=todo -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:16-alpine
+# docker run -d --rm --name otelcol -p 4317:4317 otel/opentelemetry-collector-contrib:latest
 
 import os
 from typing import List, Optional, Annotated, AsyncGenerator, Any
