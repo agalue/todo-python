@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/max-attributes-per-line -->
 <template>
   <v-list subheader two-line flat>
     <TodoItem v-for="todo in todos" :key="todo.id" :todo="todo" @delete="onDelete" @complete="onComplete" />
@@ -7,10 +8,11 @@
 <script setup>
 import TodoItem from './TodoItem.vue';
 
-import { defineProps, defineEmits } from 'vue';
-
 defineProps({
-  todos: Array
+  todos: {
+    type: Array,
+    required: true
+  }
 });
 
 const emit = defineEmits(['delete', 'complete'])

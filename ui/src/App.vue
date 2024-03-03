@@ -1,11 +1,12 @@
+<!-- eslint-disable vue/max-attributes-per-line -->
 <template>
   <v-app>
     <v-app-bar color="primary" dark>
-      <v-icon icon="mdi-checkbox-marked-circle-plus-outline" end></v-icon>
+      <v-icon icon="mdi-checkbox-marked-circle-plus-outline" end />
       <v-app-bar-title>TODO Application</v-app-bar-title>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn icon :href="docsURL" target="_blank">
-        <v-icon icon="mdi-help"/>
+        <v-icon icon="mdi-help" />
       </v-btn>
     </v-app-bar>
     <v-container>
@@ -19,9 +20,9 @@
       </v-row>
       <v-snackbar v-model="errorSnackbar.show" color="red" top>
         {{ errorSnackbar.message }}
-        <template v-slot:actions>
+        <template #actions>
           <v-btn @click="errorSnackbar.show = false">
-            <v-icon icon="mdi-close"/>
+            <v-icon icon="mdi-close" />
           </v-btn>
         </template>
       </v-snackbar>
@@ -45,7 +46,7 @@ const errorSnackbar = ref({ show: false, message: '' });
 
 const baseURL = 'http://localhost:8080';
 const apiBaseURL = `${baseURL}/todos/`;
-const docsURL = ref(`${baseURL}docs`);
+const docsURL = ref(`${baseURL}/docs`);
 
 axios.interceptors.response.use(
   (response) => response,

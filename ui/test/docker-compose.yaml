@@ -1,0 +1,63 @@
+---
+services:
+
+  otelcol:
+    image: otel/opentelemetry-collector-contrib:latest
+    hostname: otelcol
+    container_name: otelcol
+    ports:
+    - 4317:4317 # otlp grpc
+    - 4318:4318 # otlp http
+    volumes:
+    - ./otelcol-config.yaml:/etc/otelcol-config.yaml
+    command:
+    - --config=/etc/otelcol-config.yaml
+    environment:
+      TZ: America/New_York
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    hostname: postgres
+    ports:
+    - 5432:5432
+    environment:
+      TZ: America/New_York
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: '5432'
+      POSTGRES_DB: todo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 1s
+      retries: 10
+
+  api:
+    build:
+      context: ../api
+    hostname: api
+    container_name: api
+    depends_on:
+      postgres:
+        condition: service_healthy
+      otelcol:
+        condition: service_started
+    ports:
+    - 8080:8080
+    environment:
+      TZ: America/New_York
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: '5432'
+      POSTGRES_DB: todo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      OTEL_SERVICE_NAME: api
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
+      OTEL_LOGS_EXPORTER: otlp
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otelcol:4317
+      OTEL_PYTHON_LOG_CORRELATION: "true"
+      OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED: "true"
+      OTEL_PYTHON_FASTAPI_EXCLUDED_URLS: health

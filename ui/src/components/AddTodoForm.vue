@@ -1,9 +1,10 @@
+<!-- eslint-disable vue/max-attributes-per-line -->
 <template>
   <v-text-field v-model="title" label="Type your new task and hit enter to add it" @keyup.enter="addTodo" />
 </template>
 
 <script setup>
-import { ref, defineEmits } from 'vue';
+import { ref } from 'vue';
 
 const title = ref("")
 

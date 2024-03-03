@@ -1,27 +1,32 @@
+<!-- eslint-disable vue/singleline-html-element-content-newline -->
+<!-- eslint-disable vue/max-attributes-per-line -->
 <template>
   <v-list-item>
-    <template v-slot:prepend>
+    <template #prepend>
       <v-list-item-action start>
-        <v-checkbox v-model="completed" @click="onComplete"/>
+        <v-checkbox v-model="completed" @click="onComplete" />
       </v-list-item-action>
     </template>
     <v-list-item-title :class="{done: completed}">{{ todo.title }}</v-list-item-title>
     <v-list-item-subtitle>{{ new Date(todo.created_at) }}</v-list-item-subtitle>
-    <template v-slot:append v-if="completed">
-      <v-btn class="ma-2" color="red" icon="mdi-close" @click="onDelete"/>
+    <template v-if="completed" #append>
+      <v-btn class="ma-2" color="red" icon="mdi-close" @click="onDelete" />
     </template>
   </v-list-item>
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits, toRefs, onMounted } from 'vue';
+import { ref, toRefs, onMounted } from 'vue';
 
 const completed = ref(false)
 
 const emit = defineEmits(['delete', 'complete'])
 
 const props = defineProps({
-  todo: Object
+  todo: {
+    type: Object,
+    required: true
+  }
 });
 
 const { todo } = toRefs(props)
