@@ -3,6 +3,9 @@
 ---
 multitenancy_enabled: false
 
+usage_stats:
+  enabled: false
+
 blocks_storage:
   backend: filesystem
   bucket_store:

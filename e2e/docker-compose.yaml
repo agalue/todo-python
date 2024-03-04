@@ -115,8 +115,9 @@ services:
     - ./config/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/config.yaml
     environment:
       TZ: America/New_York
-      GF_AUTH_ANONYMOUS_ENABLED: true
+      GF_AUTH_ANONYMOUS_ENABLED: 'true'
       GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_ANALYTICS_REPORTING_ENABLED: 'false'
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:3000/login || exit 1
       interval: 10s
@@ -166,8 +167,8 @@ services:
       OTEL_METRICS_EXPORTER: otlp
       OTEL_LOGS_EXPORTER: otlp
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otelcol:4317
-      OTEL_PYTHON_LOG_CORRELATION: "true"
-      OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED: "true"
+      OTEL_PYTHON_LOG_CORRELATION: 'true'
+      OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED: 'true'
       OTEL_PYTHON_FASTAPI_EXCLUDED_URLS: health
 
   ui:

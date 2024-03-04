@@ -3,6 +3,9 @@
 ---
 stream_over_http_enabled: true
 
+usage_report:
+  reporting_enabled: false
+
 server:
   http_listen_port: 3200
   log_level: info

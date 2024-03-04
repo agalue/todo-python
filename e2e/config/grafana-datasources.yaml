@@ -5,6 +5,7 @@ datasources:
 
 - name: Prometheus
   type: prometheus
+  uid: prometheus_ds
   isDefault: true
   editable: true
   access: proxy
@@ -12,6 +13,7 @@ datasources:
 
 - name: Mimir
   type: prometheus
+  uid: mimir_ds
   isDefault: false
   editable: true
   access: proxy
@@ -19,6 +21,7 @@ datasources:
 
 - name: Loki
   type: loki
+  uid: loki_ds
   isDefault: false
   editable: true
   access: proxy
@@ -27,14 +30,25 @@ datasources:
     # LogQL example: {exporter="OTLP"} | json
     derivedFields:
     - name: TraceID
-      datasourceUid: tempo
+      datasourceUid: tempo_ds
       matchType: label
+      matcherType: label
       matcherRegex: traceid
       url: $${__value.raw}
 
 - name: Tempo
   type: tempo
+  uid: tempo_ds
   isDefault: false
   editable: true
   access: proxy
   url: http://tempo:3200
+  jsonData:
+    lokiSearch:
+      datasourceUid: loki_ds
+    tracesToLogs:
+      datasourceUid: loki_ds
+    serviceMap:
+      datasourceUid: mimir_ds
+    nodeGraph:
+      enabled: true
