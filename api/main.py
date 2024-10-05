@@ -2,14 +2,15 @@
 # docker run -d --rm --name otelcol -p 4317:4317 otel/opentelemetry-collector-contrib:latest
 
 import os
+from datetime import datetime
 from typing import List, Optional, Annotated, AsyncGenerator, Any
 from sqlmodel import Field, SQLModel, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, field_validator
-from datetime import datetime
+from pydantic import BaseModel, ConfigDict, field_validator
+from contextlib import asynccontextmanager
 from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.instrumentation.logging import LoggingInstrumentor
@@ -23,10 +24,17 @@ db_url = f"postgresql+asyncpg://{db_user}:{db_passwd}@{db_host}:{db_port}/{db_na
 
 engine = create_async_engine(db_url, echo=True, future=True)
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with engine.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.create_all)
+    yield
+
 app = FastAPI(
     title="TODO API",
     version="0.1.0",
-    contact={"name": "Alejandro Galue"}
+    contact={"name": "Alejandro Galue"},
+    lifespan=lifespan
 )
 
 origins = [
@@ -49,7 +57,7 @@ class Todo(SQLModel, table=True):
     description: Optional[str]
     priority: int
     completed: bool = False
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now())
 
 class TodoAdd(BaseModel):
     title: str
@@ -62,7 +70,7 @@ class TodoAdd(BaseModel):
             raise ValueError('The priority must be a number between 1 and 5')
         return value
 
-    class Config:
+    model_config = ConfigDict(
         json_schema_extra = {
             'examples': [
                 {
@@ -72,6 +80,7 @@ class TodoAdd(BaseModel):
                 }
             ]
         }
+    )
 
 class HealthCheck(BaseModel):
     status: str = "OK"
@@ -84,18 +93,13 @@ async def get_db() -> AsyncGenerator[AsyncSession, Any]:
         yield session
 
 async def get_todo(id: int, db: AsyncSession) -> Todo:
-    result = await db.exec(select(Todo).where(Todo.id == id))
-    todo = result.first()
+    result = await db.execute(select(Todo).where(Todo.id == id))
+    todo = result.scalar_one_or_none()
     if todo is None:
         raise HTTPException(status_code=404, detail="Todo not found")
     return todo
 
 DB = Annotated[AsyncSession, Depends(get_db)]
-
-@app.on_event("startup")
-async def startup():
-    async with engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.create_all)
 
 @app.get("/health", summary="Perform a Health Check", tags=["healthcheck"])
 async def get_health() -> HealthCheck:
@@ -111,8 +115,8 @@ async def create_todo(src: TodoAdd, db: DB) -> Todo:
 
 @app.get("/todos/")
 async def read_todos(db: DB) -> List[Todo]:
-    result = await db.exec(select(Todo))
-    return result.all()
+    result = await db.execute(select(Todo))
+    return result.scalars().all()
 
 @app.get("/todos/{id}")
 async def read_todo(id: int, db: DB) -> Todo:

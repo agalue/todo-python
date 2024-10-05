@@ -13,11 +13,6 @@ services:
     - ./config/mimir-config.yaml:/etc/mimir-config.yaml
     environment:
       TZ: America/New_York
-    healthcheck:
-      test: wget --quiet --tries=1 --spider http://localhost:9009/ready || exit 1
-      interval: 10s
-      timeout: 1s
-      retries: 10
 
   loki:
     image: grafana/loki:latest
@@ -84,7 +79,7 @@ services:
     - 4318:4318 # otlp http
     depends_on:
       mimir:
-        condition: service_healthy
+        condition: service_started
       loki:
         condition: service_healthy
       tempo:
@@ -102,7 +97,7 @@ services:
     container_name: grafana
     depends_on:
       mimir:
-        condition: service_healthy
+        condition: service_started
       loki:
         condition: service_healthy
       tempo:
