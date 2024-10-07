@@ -23,8 +23,6 @@ exporters:
 
 processors:
   batch:
-  spanmetrics:
-    metrics_exporter: prometheusremotewrite
 
 connectors:
   spanmetrics:

@@ -9,3 +9,8 @@ opentelemetry-instrumentation-fastapi
 opentelemetry-instrumentation-sqlalchemy
 opentelemetry-instrumentation-logging
 opentelemetry-exporter-otlp
+pytest
+pytest-asyncio
+pytest-anyio
+httpx
+aiosqlite

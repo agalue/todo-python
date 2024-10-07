@@ -23,16 +23,19 @@ compactor:
 
 distributor:
   ring:
-    instance_addr: 127.0.0.1
     kvstore:
       store: memberlist
+  pool:
+    health_check_ingesters: true
 
 ingester:
   ring:
-    instance_addr: 127.0.0.1
     kvstore:
       store: memberlist
     replication_factor: 1
+    min_ready_duration: 0s
+    final_sleep: 0s
+    num_tokens: 512
 
 ruler_storage:
   backend: filesystem

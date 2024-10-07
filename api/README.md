@@ -7,9 +7,9 @@ It has OpenTelemetry auto-instrumentation enabled.
 Install dependencies:
 
 ```bash
-python3.11 -m venv venv
+python3 -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip install -U -r requirements.txt
 ```
 
 Run PostgreSQL via Docker:
